@@ -284,16 +284,21 @@ Para generar un dump PostgreSQL reproducible para la entrega, ejecutá `backend/
 
 El frontend usa `VITE_API_URL`, definido en `frontend/.env.example` para desarrollo local.
 
-### ☁️ Preparación para despliegue
+### ☁️ Despliegue en la nube
 
-La configuración de despliegue está preparada en `render.yaml`, `backend/Dockerfile` y `netlify.toml`. El backend se ejecuta en Render con Java 21; el frontend se construye en Netlify con Node.js 22.12 y pnpm. La regla de redirección de Netlify permite que React Router abra directamente las rutas de la aplicación.
+| Componente | Ambiente desplegado |
+|---|---|
+| Frontend | [Tienda pública en Netlify](https://tfi-descanso-bygi-e-commerce.netlify.app/) |
+| Backend | [API del catálogo en Render](https://descanso-by-gi-api.onrender.com/api/catalogo/producto) · [Documentación OpenAPI](https://descanso-by-gi-api.onrender.com/v3/api-docs) |
+| Base de datos | [Proyecto PostgreSQL en Supabase](https://supabase.com/dashboard/project/mzebhsttmuyqzvhmqfcx) (requiere acceso al proyecto) |
 
-El despliegue real queda pendiente de configurar las cuentas y credenciales del equipo:
+Se verificó que la tienda abre públicamente y que la API del catálogo responde con HTTP 200 y permite solicitudes desde el dominio de Netlify. En esa verificación, el catálogo devolvió `[]` porque la base todavía no tenía productos cargados. Quedan pendientes la carga del inventario y las pruebas manuales de registro, inicio de sesión, carrito, pedidos y administración.
 
-1. Crear la base PostgreSQL en Supabase y copiar los datos de conexión. En Render, completar `DB_URL` con una URL JDBC (`jdbc:postgresql://...`) y el modo SSL requerido por la conexión de Supabase; completar también `DB_USERNAME` y `DB_PASSWORD`. Si Supabase ya tenía las tablas antes de esta corrección, ejecutar `backend/sql/restricciones-integridad.sql` en su editor SQL.
-2. Crear el servicio web de Render desde el repositorio usando el Blueprint `render.yaml`. Configurar `JWT_SECRET` con una clave aleatoria de al menos 32 caracteres y `CORS_ALLOWED_ORIGINS` con el origen del sitio Netlify (sin rutas ni barra final).
-3. Importar el mismo repositorio en Netlify. La configuración toma `frontend/` como directorio base y `frontend/dist` como publicación. Definir `VITE_API_URL` como la URL HTTPS pública del backend de Render, sin agregar `/api`.
-4. Cuando ambos servicios estén publicados, verificar registro e inicio de sesión, catálogo, operaciones del carrito, creación de pedidos y acceso administrativo en el entorno desplegado.
+#### Configuración del despliegue
+
+1. **Supabase.** Desde **Connect**, obtené los datos de **Session pooler**. En Render, configurá `DB_URL` con el formato `jdbc:postgresql://<host-del-pooler>:5432/<base>?sslmode=require`, y completá `DB_USERNAME` y `DB_PASSWORD` con las credenciales de PostgreSQL.
+2. **Render.** El servicio `descanso-by-gi-api` usa la rama `main`, la carpeta `backend/` y su [Dockerfile](./backend/Dockerfile) con Java 21. Configurá `JWT_SECRET` con una clave aleatoria de al menos 32 caracteres y `CORS_ALLOWED_ORIGINS` con el origen HTTPS de Netlify, sin rutas ni barra final. El repositorio también incluye [render.yaml](./render.yaml) para configurar un despliegue mediante Blueprint.
+3. **Netlify.** El sitio usa la rama `main`, `frontend/` como directorio base, `pnpm build` como comando y `dist` como directorio de publicación relativo a la base. Definí `VITE_API_URL` con la URL pública HTTPS de Render, sin agregar `/api`. [netlify.toml](./netlify.toml) también configura la redirección que permite abrir directamente las rutas de React Router.
 
 No guardes credenciales en estos archivos ni en el repositorio; ingresalas en las variables de entorno de cada servicio. Para desarrollo local, `frontend/.env.example` conserva la URL local.
 
@@ -337,7 +342,8 @@ $env:CORS_ALLOWED_ORIGINS="http://localhost:5173"
 - [x] Checkout + panel administrativo
 - [x] Integración, pruebas automatizadas y documentación
 - [ ] Pruebas manuales de los flujos en el navegador
-- [ ] Deployment en la nube
+- [x] Despliegue en la nube
+- [ ] Carga del inventario en producción
 - [ ] Video explicativo
 
 ---
