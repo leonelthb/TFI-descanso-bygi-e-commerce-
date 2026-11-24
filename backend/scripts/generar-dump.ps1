@@ -44,6 +44,7 @@ $pgDumpArguments = @(
     "--username=$Username"
     "--dbname=$Database"
     '--format=plain'
+    '--schema=public'
     '--no-owner'
     '--no-privileges'
     '--password'
@@ -68,6 +69,13 @@ try {
     if ($dumpFile.Length -eq 0) {
         throw 'pg_dump generó un archivo vacío.'
     }
+
+    # Una base vacía ya tiene public. Supabase puede exportar opciones de columna
+    # que la distribución estándar de PostgreSQL no reconoce.
+    $sql = [IO.File]::ReadAllText($dumpPath)
+    $sql = $sql.Replace('CREATE SCHEMA public;', 'CREATE SCHEMA IF NOT EXISTS public;')
+    $sql = [regex]::Replace($sql, '(?m)^ALTER TABLE ONLY public\.[^\r\n]+ SET \(pg_attver=\d+\);\r?\n', '')
+    [IO.File]::WriteAllText($dumpPath, $sql)
 
     Write-Host "Dump creado correctamente ($([math]::Round($dumpFile.Length / 1MB, 2)) MB)."
 } catch {

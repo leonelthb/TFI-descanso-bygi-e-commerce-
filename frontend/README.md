@@ -1,32 +1,27 @@
-# React + TypeScript + Vite
+# Frontend de Descanso by Gi
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Aplicación React y TypeScript construida con Vite. Incluye catálogo público, registro e inicio de sesión, carrito, pedidos y un panel de administración para usuarios autorizados.
 
-Currently, two official plugins are available:
+## Desarrollo local
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Instalá Node.js 22.12 o compatible y pnpm. Desde esta carpeta, copiá el archivo de configuración de ejemplo e iniciá el servidor.
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```powershell
+Copy-Item .env.example .env
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Abrí `http://localhost:5173`. El archivo `.env.example` apunta a `http://localhost:8080`. Iniciá el backend siguiendo el [README principal](../README.md) y mantené ese puerto o ajustá `VITE_API_URL`. Esta variable debe terminar en el dominio y puerto, sin agregar `/api`. Vite incorpora el valor al compilar, por lo que las variables `VITE_*` son públicas.
+
+## Compilación y despliegue
+
+```powershell
+pnpm build
+pnpm preview
+```
+
+El build genera `dist/`. Netlify construye desde esta carpeta con `pnpm build` y publica `dist`. El archivo [netlify.toml](../netlify.toml) redirige las rutas de la aplicación a `index.html` para que React Router pueda resolverlas al navegar directamente.
+
+- [Tienda desplegada](https://tfi-descanso-bygi-e-commerce.netlify.app/)
+- [API interactiva](https://descanso-by-gi-api.onrender.com/swagger-ui/index.html)

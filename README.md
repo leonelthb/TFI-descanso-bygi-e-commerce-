@@ -94,7 +94,7 @@ Los diagramas permiten visualizar la estructura de la base de datos y el diseño
 - Análisis de requisitos funcionales y no-funcionales
 - Diseño de arquitectura del sistema
 - Diseño de base de datos (modelo relacional, tablas, índices)
-- Especificación de APIs REST (endpoints, métodos, respuestas)
+- Documentación de rutas y contratos HTTP generada con OpenAPI
 
 **2. Desarrollo** 
 - Backend: APIs REST en Java Spring Boot (productos, carrito, pedidos, usuarios)
@@ -110,7 +110,7 @@ Los diagramas permiten visualizar la estructura de la base de datos y el diseño
 
 **4. Documentación** 
 - README completo con instrucciones de instalación
-- Documentación técnica (arquitectura, APIs, DB)
+- Documentación técnica del modelo de datos, la API y el despliegue
 - Diagramas (ER diagram)
 
 **5. Deployment** 
@@ -213,7 +213,7 @@ backend/
 ---
 
 ## Modulo frontend
-El frontend será desarrollado utilizando React + TypeScript.
+El frontend está implementado con React y TypeScript. Usá su [guía de desarrollo](./frontend/README.md) para instalarlo y conectarlo al backend.
 
 ```
 frontend/
@@ -266,6 +266,8 @@ En Windows PowerShell, usá `Copy-Item .env.example .env` en lugar de `cp`.
 
 ### Base de datos
 
+Para reconstruir la base sin acceso a Supabase, usá el [dump incluido](./database/dumps/descanso_by_gi.sql) y seguí las [instrucciones de restauración](./database/README.md#restaurar-el-dump-entregado). El archivo incluye el esquema y tres productos ficticios de demostración.
+
 Creá una base PostgreSQL vacía llamada `descanso_by_gi` (o usá el nombre que definas en `DB_URL`). El backend crea las tablas de las entidades al iniciarse. El repositorio no incluye archivos `schema.sql` ni `data.sql`; para agregar los `CHECK` del diccionario a una base que ya tenía las tablas, ejecutá una vez `backend/sql/restricciones-integridad.sql`.
 
 Para generar un dump PostgreSQL reproducible para la entrega, ejecutá `backend/scripts/generar-dump.ps1`. El script exporta el esquema y el catálogo, y deja vacías las tablas que podrían contener cuentas, datos personales o pedidos reales. Los pasos para generarlo y restaurarlo están en [`database/README.md`](./database/README.md).
@@ -289,10 +291,12 @@ El frontend usa `VITE_API_URL`, definido en `frontend/.env.example` para desarro
 | Componente | Ambiente desplegado |
 |---|---|
 | Frontend | [Tienda pública en Netlify](https://tfi-descanso-bygi-e-commerce.netlify.app/) |
-| Backend | [API del catálogo en Render](https://descanso-by-gi-api.onrender.com/api/catalogo/producto) · [Documentación OpenAPI](https://descanso-by-gi-api.onrender.com/v3/api-docs) |
+| Backend | [API del catálogo en Render](https://descanso-by-gi-api.onrender.com/api/catalogo/producto) · [Swagger UI](https://descanso-by-gi-api.onrender.com/swagger-ui/index.html) · [OpenAPI JSON](https://descanso-by-gi-api.onrender.com/v3/api-docs) |
 | Base de datos | [Proyecto PostgreSQL en Supabase](https://supabase.com/dashboard/project/mzebhsttmuyqzvhmqfcx) (requiere acceso al proyecto) |
 
-Se verificó que la tienda abre públicamente y que la API del catálogo responde con HTTP 200 y permite solicitudes desde el dominio de Netlify. En esa verificación, el catálogo devolvió `[]` porque la base todavía no tenía productos cargados. Quedan pendientes la carga del inventario y las pruebas manuales de registro, inicio de sesión, carrito, pedidos y administración.
+Se verificó que la tienda abre públicamente y que la API del catálogo responde con HTTP 200 desde el dominio de Netlify. El catálogo incluye tres productos ficticios con precios ilustrativos. El inventario comercial queda pendiente de validación por el equipo.
+
+Los resultados de la prueba en producción, la suite automatizada y la restauración están en [Verificación de la entrega](./docs/verificacion-entrega.md).
 
 #### Configuración del despliegue
 
@@ -343,7 +347,8 @@ $env:CORS_ALLOWED_ORIGINS="http://localhost:5173"
 - [x] Integración, pruebas automatizadas y documentación
 - [ ] Pruebas manuales de los flujos en el navegador
 - [x] Despliegue en la nube
-- [ ] Carga del inventario en producción
+- [x] Carga del catálogo de demostración en producción
+- [x] Restauración del dump en una base PostgreSQL vacía
 - [ ] Video explicativo
 
 ---

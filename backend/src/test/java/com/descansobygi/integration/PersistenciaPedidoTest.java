@@ -18,6 +18,7 @@ import com.descansobygi.repository.catalogo.MarcaRepository;
 import com.descansobygi.repository.catalogo.ProductoRepository;
 import com.descansobygi.repository.pedidos.PedidoRepository;
 import com.descansobygi.repository.usuarios.UsuarioRepository;
+import com.descansobygi.security.JwtTokenProvider;
 import com.descansobygi.service.carrito.ICarritoService;
 import com.descansobygi.service.pedidos.IPedidoService;
 import jakarta.persistence.EntityManager;
@@ -25,6 +26,10 @@ import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -34,10 +39,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 @Transactional
 class PersistenciaPedidoTest {
+
+    @Autowired
+    private MockMvc mvc;
+
+    @Autowired
+    private JwtTokenProvider tokens;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private IPedidoService pedidoService;
@@ -126,6 +144,52 @@ class PersistenciaPedidoTest {
 
         assertThrows(BadRequestException.class, () -> pedidoService.crearPedido(
                 usuario.getId(), new PedidoRequestDTO(FormaDePago.EFECTIVO)));
+    }
+
+    @Test
+    void unClienteNoPuedeListarTodosLosPedidos() throws Exception {
+        Usuario cliente = crearUsuario();
+        mvc.perform(get("/api/pedidos")
+                        .header("Authorization", "Bearer " + tokens.generarToken(cliente)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void unPedidoPropioEsVisibleYElMismoPedidoDevuelve404ParaOtroCliente() throws Exception {
+        Usuario titular = crearUsuario();
+        Usuario otroCliente = crearUsuario();
+        Producto producto = crearProducto(3);
+        Carrito carrito = new Carrito();
+        carrito.setEstado(EstadoCarrito.ACTIVO);
+        carrito.setUsuario(titular);
+        carritoRepository.save(carrito);
+        carritoService.agregarAlCarrito(titular.getId(), new ItemCarritoRequestDTO(1, producto.getId()));
+        entityManager.flush();
+        entityManager.clear();
+        var pedido = pedidoService.crearPedido(titular.getId(), new PedidoRequestDTO(FormaDePago.EFECTIVO));
+        entityManager.flush();
+        entityManager.clear();
+
+        mvc.perform(get("/api/pedidos/{id}", pedido.id())
+                        .header("Authorization", "Bearer " + tokens.generarToken(titular)))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/pedidos/{id}", pedido.id())
+                        .header("Authorization", "Bearer " + tokens.generarToken(otroCliente)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void loginConContrasenaIncorrectaDevuelve401() throws Exception {
+        Usuario cliente = crearUsuario();
+        cliente.setContrasena(passwordEncoder.encode("clave-valida"));
+        usuarioRepository.saveAndFlush(cliente);
+
+        mvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"mail":"%s","contrasena":"incorrecta"}
+                                """.formatted(cliente.getMail())))
+                .andExpect(status().isUnauthorized());
     }
 
     private Usuario crearUsuario() {

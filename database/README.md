@@ -20,12 +20,15 @@ El script usa por defecto `localhost:5432` y la base `descanso_by_gi`. Se pueden
 
 Antes de generar el dump, asegurate de que el servicio PostgreSQL esté iniciado y de que la base tenga el esquema actualizado. Si la base existente todavía no tiene las restricciones `CHECK`, aplicá primero `backend/sql/restricciones-integridad.sql`.
 
-## Restaurarlo
+## Restaurar el dump entregado
 
-Creá primero una base vacía llamada `descanso_by_gi` y ejecutá, desde la raíz del repositorio:
+El [dump entregado](./dumps/descanso_by_gi.sql) se puede restaurar en PostgreSQL sin acceso a Supabase. Creá una base vacía y ejecutá desde la raíz del repositorio:
 
 ```powershell
-psql -h localhost -p 5432 -U TU_USUARIO -d descanso_by_gi -f .\database\dumps\ARCHIVO_DUMP.sql
+createdb -h localhost -p 5432 -U TU_USUARIO descanso_by_gi
+psql -h localhost -p 5432 -U TU_USUARIO -d descanso_by_gi -v ON_ERROR_STOP=1 --single-transaction -f .\database\dumps\descanso_by_gi.sql
 ```
 
 `psql` solicitará la contraseña. Después de restaurar el dump, iniciá el backend con sus variables de entorno y registrá las cuentas de prueba desde la aplicación; el dump no contiene usuarios ni pedidos.
+
+El 24 de noviembre de 2026 verificamos la restauración con `psql` y PostgreSQL 18 en una base nueva. El resultado fue de nueve tablas en el esquema `public`, tres productos ficticios y ninguna fila en las cinco tablas de usuarios, carritos y pedidos. El dump conserva las relaciones, las secuencias y las restricciones exportadas del esquema.
