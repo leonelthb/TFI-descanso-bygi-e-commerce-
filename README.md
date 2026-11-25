@@ -306,6 +306,10 @@ Los resultados de la prueba en producción, la suite automatizada y la restaurac
 
 No guardes credenciales en estos archivos ni en el repositorio; ingresalas en las variables de entorno de cada servicio. Para desarrollo local, `frontend/.env.example` conserva la URL local.
 
+#### Acceso de prueba para la docente
+
+Ingresá con `admin@example.com` en el [panel de administración](https://tfi-descanso-bygi-e-commerce.netlify.app/admin). El equipo entrega la contraseña por privado. La cuenta tiene el rol administrador en la aplicación desplegada y está destinada a la evaluación en el entorno de prueba.
+
 #### Crear el primer administrador
 
 El registro público crea usuarios con rol `USUARIO`; no permite elegir ni asignarse el rol administrador. Para habilitar el panel en un entorno nuevo:
