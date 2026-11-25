@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import Encabezado from '../components/Encabezado'
+import PiePagina from '../components/PiePagina'
 import { adminService, type CategoriaAdmin, type MarcaAdmin, type ProductoAdminInput } from '../services/adminService'
 import type { Producto } from '../types/producto'
 
@@ -64,7 +65,7 @@ function AdminProductos() {
     }
 
     return (
-        <main className="min-h-screen bg-brand-100">
+        <main className="flex min-h-screen flex-col bg-brand-100 *:w-full">
             <Encabezado />
             <section className="mx-auto max-w-7xl px-6 py-10">
                 <Link to="/admin" className="font-semibold text-brand-800 underline">← Panel</Link>
@@ -95,6 +96,7 @@ function AdminProductos() {
                     ))}
                 </ul>
             </section>
+            <PiePagina />
         </main>
     )
 }

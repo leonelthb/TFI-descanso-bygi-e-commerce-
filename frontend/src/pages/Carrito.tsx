@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Encabezado from '../components/Encabezado'
+import PiePagina from '../components/PiePagina'
 import { useCarrito } from '../contexts/useCarrito'
 
 // Formatea el precio en pesos argentinos.
@@ -18,7 +19,7 @@ function Carrito() {
     const items = carrito?.items ?? []
 
     return (
-        <main className="min-h-screen bg-brand-100">
+        <main className="flex min-h-screen flex-col bg-brand-100 *:w-full">
 
             <Encabezado />
 
@@ -138,6 +139,7 @@ function Carrito() {
                 )}
             </section>
 
+            <PiePagina />
         </main>
     )
 }

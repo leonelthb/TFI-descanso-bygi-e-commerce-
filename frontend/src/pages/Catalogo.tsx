@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import Encabezado from '../components/Encabezado'
+import PiePagina from '../components/PiePagina'
 import ProductoCard from '../components/ProductoCard'
 import { useProductos } from '../hooks/useProductos'
 
@@ -42,7 +43,7 @@ function Catalogo() {
     const hayFiltros = busqueda !== '' || categoria !== '' || marca !== ''
 
     return (
-        <main className="min-h-screen bg-brand-100">
+        <main className="flex min-h-screen flex-col bg-brand-100 *:w-full">
 
             <Encabezado />
 
@@ -129,6 +130,7 @@ function Catalogo() {
                 )}
             </section>
 
+            <PiePagina />
         </main>
     )
 }

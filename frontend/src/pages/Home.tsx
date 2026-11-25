@@ -1,4 +1,5 @@
 import Encabezado from '../components/Encabezado'
+import PiePagina from '../components/PiePagina'
 import ProductoCard from '../components/ProductoCard'
 import { useProductos } from '../hooks/useProductos'
 
@@ -8,7 +9,7 @@ function Home() {
     const destacados = productos.slice(0, 3)
 
     return (
-        <main className="min-h-screen bg-brand-100">
+        <main className="flex min-h-screen flex-col bg-brand-100 *:w-full">
 
             <Encabezado />
 
@@ -55,6 +56,7 @@ function Home() {
                 )}
             </section>
 
+            <PiePagina />
         </main>
     )
 }

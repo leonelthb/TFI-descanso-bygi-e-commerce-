@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Encabezado from '../components/Encabezado'
+import PiePagina from '../components/PiePagina'
 import { useCarrito } from '../contexts/useCarrito'
 import { crearPedido } from '../services/pedidoService'
 import type { FormaDePago } from '../types/pedido'
@@ -40,7 +41,7 @@ function Checkout() {
     const items = carrito?.items ?? []
 
     return (
-        <main className="min-h-screen bg-brand-100">
+        <main className="flex min-h-screen flex-col bg-brand-100 *:w-full">
             <Encabezado />
             <section className="mx-auto max-w-3xl px-6 py-10">
                 <h1 className="text-3xl font-bold text-brand-950">Confirmar pedido</h1>
@@ -87,6 +88,7 @@ function Checkout() {
                     </form>
                 )}
             </section>
+            <PiePagina />
         </main>
     )
 }

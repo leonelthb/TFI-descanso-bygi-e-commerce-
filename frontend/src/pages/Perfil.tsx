@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import Encabezado from '../components/Encabezado'
+import PiePagina from '../components/PiePagina'
 import { useAuth } from '../contexts/useAuth'
 import { actualizarMiPerfil, obtenerMiPerfil } from '../services/usuarioService'
 import type { UsuarioResponse } from '../types/usuario'
@@ -34,7 +35,7 @@ function Perfil() {
     )
 
     return (
-        <main className="min-h-screen bg-brand-100">
+        <main className="flex min-h-screen flex-col bg-brand-100 *:w-full">
             <Encabezado />
             <section className="mx-auto max-w-2xl px-6 py-10">
                 <h1 className="text-3xl font-bold text-brand-950">Mi perfil</h1>
@@ -46,6 +47,7 @@ function Perfil() {
                 </form>}
                 {error && !perfil && <p role="alert" className="mt-4 text-red-700">{error}</p>}
             </section>
+            <PiePagina />
         </main>
     )
 }

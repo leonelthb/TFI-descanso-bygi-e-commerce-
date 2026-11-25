@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Encabezado from '../components/Encabezado'
+import PiePagina from '../components/PiePagina'
 import { obtenerPedido } from '../services/pedidoService'
 import type { Pedido } from '../types/pedido'
 
@@ -19,7 +20,7 @@ function PedidoDetalle() {
     }, [id, idValido, pedidoId])
 
     return (
-        <main className="min-h-screen bg-brand-100">
+        <main className="flex min-h-screen flex-col bg-brand-100 *:w-full">
             <Encabezado />
             <section className="mx-auto max-w-4xl px-6 py-10">
                 <Link to="/mis-pedidos" className="font-semibold text-brand-800 underline">← Volver a mis pedidos</Link>
@@ -43,6 +44,7 @@ function PedidoDetalle() {
                     </article>
                 )}
             </section>
+            <PiePagina />
         </main>
     )
 }

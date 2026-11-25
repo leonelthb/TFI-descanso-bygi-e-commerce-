@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Encabezado from '../components/Encabezado'
+import PiePagina from '../components/PiePagina'
 import { obtenerPedido } from '../services/pedidoService'
 import type { Pedido } from '../types/pedido'
 
@@ -26,7 +27,7 @@ function PedidoConfirmado() {
     }, [id, idValido, pedidoId])
 
     return (
-        <main className="min-h-screen bg-brand-100">
+        <main className="flex min-h-screen flex-col bg-brand-100 *:w-full">
             <Encabezado />
             <section className="mx-auto max-w-2xl px-6 py-12">
                 <div className="rounded-xl bg-white p-8 shadow">
@@ -43,6 +44,7 @@ function PedidoConfirmado() {
                     <Link to="/catalogo" className="mt-4 block font-semibold text-brand-800 underline">Volver al catálogo</Link>
                 </div>
             </section>
+            <PiePagina />
         </main>
     )
 }

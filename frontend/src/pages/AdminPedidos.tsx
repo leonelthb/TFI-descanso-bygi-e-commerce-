@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Encabezado from '../components/Encabezado'
+import PiePagina from '../components/PiePagina'
 import { adminService } from '../services/adminService'
 import type { Pedido } from '../types/pedido'
 
@@ -28,7 +29,7 @@ function AdminPedidos() {
     }
 
     return (
-        <main className="min-h-screen bg-brand-100">
+        <main className="flex min-h-screen flex-col bg-brand-100 *:w-full">
             <Encabezado />
             <section className="mx-auto max-w-6xl px-6 py-10">
                 <Link to="/admin" className="font-semibold text-brand-800 underline">← Panel</Link>
@@ -42,6 +43,7 @@ function AdminPedidos() {
                     </li>
                 ))}</ul>
             </section>
+            <PiePagina />
         </main>
     )
 }

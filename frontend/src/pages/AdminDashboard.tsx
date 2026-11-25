@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Encabezado from '../components/Encabezado'
+import PiePagina from '../components/PiePagina'
 import { adminService } from '../services/adminService'
 
 const secciones = [
@@ -22,7 +23,7 @@ function AdminDashboard() {
     }, [])
 
     return (
-        <main className="min-h-screen bg-brand-100">
+        <main className="flex min-h-screen flex-col bg-brand-100 *:w-full">
             <Encabezado />
             <section className="mx-auto max-w-6xl px-6 py-10">
                 <h1 className="text-3xl font-bold text-brand-950">Administración</h1>
@@ -38,6 +39,7 @@ function AdminDashboard() {
                     ))}
                 </div>
             </section>
+            <PiePagina />
         </main>
     )
 }
